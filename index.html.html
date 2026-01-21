@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Review Report | RoboNeT Repository</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --border: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+
+            --accent-critical: #dc2626;
+            --accent-high: #ea580c;
+            --accent-medium: #d97706;
+            --accent-low: #0891b2;
+            --accent-info: #2563eb;
+
+            --code-keyword: #9333ea;
+            --code-string: #16a34a;
+            --code-number: #dc2626;
+            --code-comment: #94a3b8;
+            --code-function: #2563eb;
+            --code-class: #d97706;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Scanline effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.015) 2px,
+                rgba(0, 0, 0, 0.015) 4px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 3px solid var(--border);
+            padding: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--bg-secondary));
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .header-title h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(24px, 4vw, 42px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .header-title h1 span {
+            color: var(--accent-info);
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 30px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-item::before {
+            content: '>';
+            color: var(--accent-info);
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            background: var(--bg-secondary);
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: var(--accent-info);
+        }
+
+        .stat-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-item.critical .stat-number { color: var(--accent-critical); }
+        .stat-item.high .stat-number { color: var(--accent-high); }
+        .stat-item.medium .stat-number { color: var(--accent-medium); }
+        .stat-item.low .stat-number { color: var(--accent-low); }
+        .stat-item.total .stat-number { color: var(--accent-info); }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        /* Sections */
+        section {
+            margin: 50px 0;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--accent-info);
+            background: var(--bg-tertiary);
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Issue cards */
+        .issue-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .issue-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .issue-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .issue-card.critical::before { background: var(--accent-critical); }
+        .issue-card.high::before { background: var(--accent-high); }
+        .issue-card.medium::before { background: var(--accent-medium); }
+        .issue-card.low::before { background: var(--accent-low); }
+
+        .issue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px 25px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .issue-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 12px;
+            border: 1px solid;
+        }
+
+        .issue-badge.critical {
+            color: white;
+            border-color: var(--accent-critical);
+            background: var(--accent-critical);
+        }
+
+        .issue-badge.high {
+            color: white;
+            border-color: var(--accent-high);
+            background: var(--accent-high);
+        }
+
+        .issue-badge.medium {
+            color: white;
+            border-color: var(--accent-medium);
+            background: var(--accent-medium);
+        }
+
+        .issue-badge.low {
+            color: white;
+            border-color: var(--accent-low);
+            background: var(--accent-low);
+        }
+
+        .issue-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .issue-body {
+            padding: 20px 25px;
+        }
+
+        .issue-location {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .issue-location code {
+            background: var(--bg-primary);
+            padding: 4px 8px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-info);
+            border: 1px solid var(--border);
+        }
+
+        .issue-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent-info);
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .code-block .keyword { color: var(--code-keyword); }
+        .code-block .string { color: var(--code-string); }
+        .code-block .number { color: var(--code-number); }
+        .code-block .comment { color: var(--code-comment); font-style: italic; }
+        .code-block .function { color: var(--code-function); }
+        .code-block .class { color: var(--code-class); }
+
+        .line-number {
+            display: inline-block;
+            width: 40px;
+            color: var(--text-muted);
+            text-align: right;
+            margin-right: 20px;
+            user-select: none;
+        }
+
+        .error-line {
+            background: rgba(220, 38, 38, 0.08);
+            display: block;
+            margin: 0 -20px;
+            padding: 0 20px;
+            border-left: 3px solid var(--accent-critical);
+        }
+
+        /* Fix suggestions */
+        .fix-suggestion {
+            background: rgba(8, 145, 178, 0.06);
+            border: 1px dashed var(--accent-low);
+            padding: 15px 20px;
+            margin-top: 15px;
+        }
+
+        .fix-suggestion-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-low);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .fix-suggestion-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        .data-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .data-table code {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-info);
+            background: var(--bg-primary);
+            padding: 3px 6px;
+            font-size: 12px;
+        }
+
+        /* Priority list */
+        .priority-list {
+            list-style: none;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+
+        .priority-item:hover {
+            border-color: var(--accent-info);
+            transform: translateX(5px);
+        }
+
+        .priority-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 8px 14px;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .priority-badge.p0 {
+            background: var(--accent-critical);
+            color: var(--bg-primary);
+        }
+
+        .priority-badge.p1 {
+            background: var(--accent-high);
+            color: var(--bg-primary);
+        }
+
+        .priority-badge.p2 {
+            background: var(--accent-medium);
+            color: var(--bg-primary);
+        }
+
+        .priority-badge.p3 {
+            background: #94a3b8;
+            color: white;
+        }
+
+        .priority-content h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .priority-content p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .priority-action {
+            font-size: 12px;
+            color: var(--accent-low);
+            margin-top: 8px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 3px solid var(--border);
+            padding: 40px 0;
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-item::before {
+            content: '//';
+            color: var(--accent-info);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-bar .stat-item:last-child {
+                grid-column: 1 / -1;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header-meta {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body::before {
+                display: none;
+            }
+
+            .issue-card {
+                break-inside: avoid;
+            }
+        }
+
+        /* Terminal cursor animation */
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--accent-info);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>CODE_REVIEW<span>_REPORT</span></h1>
+                    <p style="color: var(--text-secondary); margin-top: 10px;">RoboNeT Robotics & IoT Repository Analysis</p>
+                </div>
+                <div class="header-meta">
+                    <div class="meta-item">
+                        <span>Date: January 17, 2026</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>Files Analyzed: 19</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>Language: C++/Arduino</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item critical">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Critical</div>
+            </div>
+            <div class="stat-item high">
+                <div class="stat-number">8</div>
+                <div class="stat-label">High</div>
+            </div>
+            <div class="stat-item medium">
+                <div class="stat-number">10</div>
+                <div class="stat-label">Medium</div>
+            </div>
+            <div class="stat-item low">
+                <div class="stat-number">12+</div>
+                <div class="stat-label">Low</div>
+            </div>
+            <div class="stat-item total">
+                <div class="stat-number">35+</div>
+                <div class="stat-label">Total Issues</div>
+            </div>
+        </div>
+
+        <!-- Critical Issues Section -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">01</span>
+                <h2 class="section-title">Critical Issues</h2>
+            </div>
+
+            <div class="issue-grid">
+                <!-- MQ-2 Missing Brace -->
+                <div class="issue-card critical">
+                    <div class="issue-header">
+                        <span class="issue-badge critical">CRITICAL</span>
+                        <h3 class="issue-title">Missing Closing Brace - Syntax Error</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>02. Arduino/Sensors_Motors/MQ-2 Gas Sensor/main.ino</code>
+                            <span>Line: 16</span>
+                        </div>
+                        <p class="issue-description">The loop() function is not properly closed. This code will not compile.</p>
+                        <div class="code-block">
+                            <pre><span class="line-number">13</span><span class="keyword">void</span> <span class="function">loop</span>() {
+<span class="line-number">14</span>  <span class="keyword">int</span> gasLevel = <span class="function">analogRead</span>(mq2Pin);
+<span class="line-number">15</span>  Serial.<span class="function">println</span>(gasLevel);
+<span class="line-number">16</span>  <span class="function">delay</span>(<span class="number">500</span>);
+<span class="line-number">17</span>  <span class="error-line"><span class="comment">// MISSING: }</span></span>
+<span class="line-number">18</span>}</pre>
+                        </div>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Add closing brace: <code>}</code> after line 16</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wrong File Extension -->
+                <div class="issue-card critical">
+                    <div class="issue-header">
+                        <span class="issue-badge critical">CRITICAL</span>
+                        <h3 class="issue-title">Wrong File Extension - Arduino Code in .py Files</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>Files (3):</span>
+                            <code>Projects/RoboQuest Tasks/01. Task-1 (Blutooth Control)/solution.py</code>
+                            <code>Projects/RoboQuest Tasks/02. Task-2/solution_task_02.py</code>
+                            <code>Projects/RoboQuest Tasks/04. Task-4/solution_coordinates.py</code>
+                        </div>
+                        <p class="issue-description">These files contain Arduino C++ code but have .py extension. Contains #include, void setup(), etc.</p>
+                        <div class="code-block">
+                            <pre><span class="line-number">1</span><span class="keyword">#include</span> <span class="string">"BluetoothSerial.h"</span>
+<span class="line-number">2</span><span class="keyword">#include</span> <span class="string">"math.h"</span>
+<span class="line-number">3</span><span class="keyword">void</span> <span class="function">setup</span>() {
+<span class="line-number">4</span>  Serial.<span class="function">begin</span>(<span class="number">9600</span>);</pre>
+                        </div>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Rename all three files: .py &rarr; .ino</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty File -->
+                <div class="issue-card critical">
+                    <div class="issue-header">
+                        <span class="issue-badge critical">CRITICAL</span>
+                        <h3 class="issue-title">Empty File - No Implementation</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>06. Graphical User Interface/Examples/gui_dashboard.py</code>
+                        </div>
+                        <p class="issue-description">This file is completely empty (only whitespace). It should either contain implementation or be removed.</p>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Implement the GUI dashboard or remove the placeholder file</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- High Priority Bugs -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">02</span>
+                <h2 class="section-title">RoboQuest GPS Car - Bugs</h2>
+            </div>
+
+            <div class="issue-grid">
+                <!-- Infinite Loop Bug -->
+                <div class="issue-card high">
+                    <div class="issue-header">
+                        <span class="issue-badge high">HIGH</span>
+                        <h3 class="issue-title">Infinite Loop Blocks GPS Updates</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
+                            <span>Lines: 200-224</span>
+                        </div>
+                        <p class="issue-description">LeftRight() contains while(true) loop with no timeout. If compass is noisy or fails, robot spins indefinitely blocking all GPS updates.</p>
+                        <div class="code-block">
+                            <pre><span class="line-number">200</span><span class="keyword">void</span> <span class="function">LeftRight</span>() {
+<span class="line-number">201</span>  <span class="keyword">while</span> (<span class="keyword">true</span>) {  <span class="comment">// DANGER: No timeout!</span>
+<span class="line-number">202</span>    currentHeading = <span class="function">readCompass</span>();
+<span class="line-number">203</span>    targetHeading = <span class="function">getAnglee</span>(...);
+<span class="line-number">204</span>    <span class="keyword">if</span> (headingDiff <= <span class="number">8</span>) <span class="keyword">break</span>;</pre>
+                        </div>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Add max iterations counter or millis() timeout</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typos -->
+                <div class="issue-card high">
+                    <div class="issue-header">
+                        <span class="issue-badge high">HIGH</span>
+                        <h3 class="issue-title">Multiple Spelling Errors</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
+                            <span>Lines: 84, 99, 113, 118</span>
+                        </div>
+                        <p class="issue-description">Function names and strings contain typos that look unprofessional.</p>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Current</th>
+                                    <th>Should Be</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>stopp()</code></td>
+                                    <td><code>stop()</code></td>
+                                    <td>Function name</td>
+                                </tr>
+                                <tr>
+                                    <td><code>goo()</code></td>
+                                    <td><code>go()</code></td>
+                                    <td>Function name</td>
+                                </tr>
+                                <tr>
+                                    <td><code>getAnglee()</code></td>
+                                    <td><code>getAngle()</code></td>
+                                    <td>Function name</td>
+                                </tr>
+                                <tr>
+                                    <td><code>"Autonomus System"</code></td>
+                                    <td><code>"Autonomous System"</code></td>
+                                    <td>String literal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Excessive Delays -->
+                <div class="issue-card high">
+                    <div class="issue-header">
+                        <span class="issue-badge high">HIGH</span>
+                        <h3 class="issue-title">Excessive Blocking Delays</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
+                            <span>Lines: 119, 246</span>
+                        </div>
+                        <p class="issue-description">delay(100000) = 100 second blocking delay. System appears frozen for over 1.5 minutes.</p>
+                        <div class="code-block">
+                            <pre><span class="line-number">118</span>        <span class="keyword">if</span> (i == size) {
+<span class="line-number">119</span>          <span class="function">stopp</span>();
+<span class="line-number">120</span>          <span class="function">delay</span>(<span class="number">100000</span>);  <span class="comment">// 100 seconds!</span></pre>
+                        </div>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Use non-blocking millis() timer or reasonable delay (5000ms max)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hardcoded Waypoints -->
+                <div class="issue-card high">
+                    <div class="issue-header">
+                        <span class="issue-badge high">HIGH</span>
+                        <h3 class="issue-title">Hardcoded GPS Coordinates (Privacy Issue)</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
+                            <span>Lines: 41-47</span>
+                        </div>
+                        <p class="issue-description">GPS coordinates are hardcoded in the source file, revealing specific campus locations (UIU coordinates: 23.79N, 90.44E).</p>
+                        <div class="code-block">
+                            <pre><span class="line-number">41</span><span class="keyword">float</span> targetList[<span class="number">5</span>][<span class="number">2</span>] = {
+<span class="line-number">42</span>  { <span class="number">23.7993059</span>, <span class="number">90.4493381</span> },  <span class="comment">// UIU Campus</span>
+<span class="line-number">43</span>  { <span class="number">23.7995985</span>, <span class="number">90.4491094</span> },
+<span class="line-number">44</span>  ...</pre>
+                        </div>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Use placeholder coordinates or load from config file/SD card</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unused Variable -->
+                <div class="issue-card medium">
+                    <div class="issue-header">
+                        <span class="issue-badge medium">MEDIUM</span>
+                        <h3 class="issue-title">Unused Redundant Variable</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
+                            <span>Line: 27</span>
+                        </div>
+                        <p class="issue-description">Variable <code>float pi = PI;</code> is declared but PI is already a built-in constant.</p>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Remove line 27 - use built-in PI constant directly</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Logic Issues -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">03</span>
+                <h2 class="section-title">Logic Issues</h2>
+            </div>
+
+            <div class="issue-grid">
+                <!-- Button Debouncing -->
+                <div class="issue-card high">
+                    <div class="issue-header">
+                        <span class="issue-badge high">HIGH</span>
+                        <h3 class="issue-title">No Button Debouncing</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>02. Arduino/GPIO/button_led_control/main.ino</code>
+                            <span>Lines: 11-21</span>
+                        </div>
+                        <p class="issue-description">Button read without debouncing will cause multiple triggers and erratic behavior due to contact bounce.</p>
+                        <div class="code-block">
+                            <pre><span class="line-number">11</span><span class="keyword">void</span> <span class="function">loop</span>() {
+<span class="line-number">12</span>  buttonState = <span class="function">digitalRead</span>(buttonPin);  <span class="comment">// No debounce!</span>
+<span class="line-number">13</span>  <span class="keyword">if</span> (buttonState == HIGH) {
+<span class="line-number">14</span>    <span class="function">digitalWrite</span>(ledPin, HIGH);</pre>
+                        </div>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Add 20-50ms delay or use millis() based debouncing</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Serial Flood -->
+                <div class="issue-card medium">
+                    <div class="issue-header">
+                        <span class="issue-badge medium">MEDIUM</span>
+                        <h3 class="issue-title">Serial Output Flood</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>02. Arduino/GPIO/button_led_control/main.ino</code>
+                            <span>Lines: 16, 19</span>
+                        </div>
+                        <p class="issue-description">Serial.println() on every loop iteration floods output with duplicate messages.</p>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Print only on state change, not every iteration</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Redundant Calculation -->
+                <div class="issue-card low">
+                    <div class="issue-header">
+                        <span class="issue-badge low">LOW</span>
+                        <h3 class="issue-title">Redundant Calculation</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>02. Arduino/Sensors_Motors/HMC5883L Sensor (Magnetometer)/main.ino</code>
+                            <span>Line: 30</span>
+                        </div>
+                        <p class="issue-description">Expression contains redundant <code>(-0)</code> which has no effect.</p>
+                        <div class="code-block">
+                            <pre><span class="line-number">30</span><span class="keyword">float</span> declinationAngle = ((<span class="number">-0</span>) + (<span class="number">29</span> / <span class="number">60.0</span>)) / (<span class="number">180</span> / M_PI);
+<span class="line-number">--</span>                        <span class="comment">//   ^^^^ redundant</span></pre>
+                        </div>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Remove (-0): <code>(29 / 60.0) / (180 / M_PI)</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Memory & Performance -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">04</span>
+                <h2 class="section-title">Memory & Performance Concerns</h2>
+            </div>
+
+            <div class="issue-grid">
+                <div class="issue-card medium">
+                    <div class="issue-header">
+                        <span class="issue-badge medium">MEDIUM</span>
+                        <h3 class="issue-title">Heap Fragmentation Risk</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>Projects/RoboQuest Tasks/02. Task-2/solution_task_02.py</code>
+                            <span>Line: 61</span>
+                        </div>
+                        <p class="issue-description">Using <code>std::vector&lt;GpsLogEntry&gt;</code> on ESP32 for long trips can cause heap fragmentation and crashes.</p>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Use fixed-size array or circular buffer with max entries limit</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="issue-card low">
+                    <div class="issue-header">
+                        <span class="issue-badge low">LOW</span>
+                        <h3 class="issue-title">GPS Precision Loss</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>File:</span>
+                            <code>All GPS navigation files</code>
+                        </div>
+                        <p class="issue-description">Using <code>float</code> for GPS coordinates loses ~1m precision compared to <code>double</code>. May affect navigation accuracy.</p>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Use <code>double</code> for coordinates if precision is critical</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Quality -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">05</span>
+                <h2 class="section-title">Code Quality Issues</h2>
+            </div>
+
+            <div class="issue-grid">
+                <div class="issue-card low">
+                    <div class="issue-header">
+                        <span class="issue-badge low">LOW</span>
+                        <h3 class="issue-title">Magic Numbers Throughout</h3>
+                    </div>
+                    <div class="issue-body">
+                        <p class="issue-description">PWM values like 150, 120, 128 appear without explanation. Heading tolerance of 8 degrees and distance threshold of 5 meters are unnamed.</p>
+                        <div class="code-block">
+                            <pre><span class="comment">// Instead of this:</span>
+<span class="function">ledcWrite</span>(<span class="number">0</span>, <span class="number">150</span>);  <span class="comment">// What is 150?</span>
+
+<span class="comment">// Use this:</span>
+<span class="keyword">const</span> <span class="keyword">int</span> MOTOR_SPEED_FULL = <span class="number">150</span>;
+<span class="keyword">const</span> <span class="keyword">float</span> HEADING_TOLERANCE_DEG = <span class="number">8.0</span>;
+<span class="keyword">const</span> <span class="keyword">float</span> TARGET_REACH_THRESHOLD_M = <span class="number">5.0</span>;</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="issue-card medium">
+                    <div class="issue-header">
+                        <span class="issue-badge medium">MEDIUM</span>
+                        <h3 class="issue-title">No Sensor Error Recovery</h3>
+                    </div>
+                    <div class="issue-body">
+                        <p class="issue-description">All sensor files use <code>while(1);</code> on failure, requiring hard reset. No retry mechanism or graceful degradation.</p>
+                        <div class="code-block">
+                            <pre><span class="line-number">12</span>  <span class="keyword">if</span> (!mag.<span class="function">begin</span>()) {
+<span class="line-number">13</span>    Serial.<span class="function">println</span>(<span class="string">"Ooops, no HMC5883 detected..."</span>);
+<span class="line-number">14</span>    <span class="keyword">while</span> (<span class="number">1</span>);  <span class="comment">// Dead forever</span>
+<span class="line-number">15</span>  }</pre>
+                        </div>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Add retry count and fallback to dead reckoning mode</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="issue-card low">
+                    <div class="issue-header">
+                        <span class="issue-badge low">LOW</span>
+                        <h3 class="issue-title">Folder Name Typo</h3>
+                    </div>
+                    <div class="issue-body">
+                        <div class="issue-location">
+                            <span>Folder:</span>
+                            <code>Projects/RoboQuest Tasks/01. Task-1 (Blutooth Control)/</code>
+                        </div>
+                        <p class="issue-description">"Blutooth" should be "Bluetooth"</p>
+                        <div class="fix-suggestion">
+                            <div class="fix-suggestion-header">
+                                <span>[ FIX ]</span>
+                            </div>
+                            <p class="fix-suggestion-content">Rename folder: "Blutooth Control" &rarr; "Bluetooth Control"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Priority Action List -->
+        <section>
+            <div class="section-header">
+                <span class="section-number">06</span>
+                <h2 class="section-title">Recommended Fix Priority</h2>
+            </div>
+
+            <ul class="priority-list">
+                <li class="priority-item">
+                    <span class="priority-badge p0">P0</span>
+                    <div class="priority-content">
+                        <h4>Add missing closing brace to MQ-2 Gas Sensor</h4>
+                        <p>File: 02. Arduino/Sensors_Motors/MQ-2 Gas Sensor/main.ino</p>
+                        <p class="priority-action">&rarr; ACTION: Add "}" after line 16</p>
+                    </div>
+                </li>
+                <li class="priority-item">
+                    <span class="priority-badge p0">P0</span>
+                    <div class="priority-content">
+                        <h4>Rename incorrect file extensions</h4>
+                        <p>3 files with .py extension containing Arduino C++ code</p>
+                        <p class="priority-action">&rarr; ACTION: Rename solution.py, solution_task_02.py, solution_coordinates.py to .ino</p>
+                    </div>
+                </li>
+                <li class="priority-item">
+                    <span class="priority-badge p1">P1</span>
+                    <div class="priority-content">
+                        <h4>Add timeout to LeftRight() infinite loop</h4>
+                        <p>Currently blocks GPS updates indefinitely if compass fails</p>
+                        <p class="priority-action">&rarr; ACTION: Add max iterations or millis() timeout</p>
+                    </div>
+                </li>
+                <li class="priority-item">
+                    <span class="priority-badge p1">P1</span>
+                    <div class="priority-content">
+                        <h4>Add button debouncing to button_led_control</h4>
+                        <p>Will cause erratic behavior without debouncing</p>
+                        <p class="priority-action">&rarr; ACTION: Add 20-50ms debounce delay or state tracking</p>
+                    </div>
+                </li>
+                <li class="priority-item">
+                    <span class="priority-badge p1">P1</span>
+                    <div class="priority-content">
+                        <h4>Replace excessive blocking delays</h4>
+                        <p>delay(100000) causes 100-second freeze</p>
+                        <p class="priority-action">&rarr; ACTION: Use non-blocking millis() timers</p>
+                    </div>
+                </li>
+                <li class="priority-item">
+                    <span class="priority-badge p2">P2</span>
+                    <div class="priority-content">
+                        <h4>Fix spelling errors in function names</h4>
+                        <p>stopp(), goo(), getAnglee(), "Autonomus"</p>
+                        <p class="priority-action">&rarr; ACTION: Rename to stop(), go(), getAngle(), "Autonomous"</p>
+                    </div>
+                </li>
+                <li class="priority-item">
+                    <span class="priority-badge p2">P2</span>
+                    <div class="priority-content">
+                        <h4>Remove hardcoded GPS coordinates</h4>
+                        <p>Privacy concern - reveals campus location</p>
+                        <p class="priority-action">&rarr; ACTION: Use placeholder coordinates or config file</p>
+                    </div>
+                </li>
+                <li class="priority-item">
+                    <span class="priority-badge p3">P3</span>
+                    <div class="priority-content">
+                        <h4>Implement or remove gui_dashboard.py</h4>
+                        <p>File is completely empty</p>
+                        <p class="priority-action">&rarr; ACTION: Implement GUI or delete placeholder</p>
+                    </div>
+                </li>
+                <li class="priority-item">
+                    <span class="priority-badge p3">P3</span>
+                    <div class="priority-content">
+                        <h4>Replace magic numbers with named constants</h4>
+                        <p>PWM values 150, 120, 128 need semantic names</p>
+                        <p class="priority-action">&rarr; ACTION: Define MOTOR_SPEED_FULL, HEADING_TOLERANCE, etc.</p>
+                    </div>
+                </li>
+                <li class="priority-item">
+                    <span class="priority-badge p3">P3</span>
+                    <div class="priority-content">
+                        <h4>Add sensor error recovery logic</h4>
+                        <p>All sensors use while(1); on failure</p>
+                        <p class="priority-action">&rarr; ACTION: Implement retry with fallback mode</p>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <div class="footer-item">
+                    <span>Report Generated: 2026-01-17</span>
+                </div>
+                <div class="footer-item">
+                    <span>Analyzer: Claude Code Review System</span>
+                </div>
+                <div class="footer-item">
+                    <span>Repository: RoboNeT-Robotics-Network-IoT-Repository</span>
+                </div>
+            </div>
+            <div style="margin-top: 20px; color: var(--text-muted);">
+                <span class="cursor"></span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
