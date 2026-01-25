@@ -1,33 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Review Report | RoboNeT Repository</title>
+    <title>ঘুরাঘুরি - বাংলাদেশের যাত্রা কাহিনী</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Galada&family=Noto+Sans+Bengali:wght@300;400;500;600;700;800;900&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
         :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8fafc;
-            --bg-tertiary: #f1f5f9;
-            --border: #cbd5e1;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-muted: #94a3b8;
-
-            --accent-critical: #dc2626;
-            --accent-high: #ea580c;
-            --accent-medium: #d97706;
-            --accent-low: #0891b2;
-            --accent-info: #2563eb;
-
-            --code-keyword: #9333ea;
-            --code-string: #16a34a;
-            --code-number: #dc2626;
-            --code-comment: #94a3b8;
-            --code-function: #2563eb;
-            --code-class: #d97706;
+            --sunset-orange: #e85d04;
+            --deep-red: #dc2f02;
+            --golden-yellow: #ffba08;
+            --forest-green: #2d6a4f;
+            --deep-teal: #1b4332;
+            --earth-brown: #6b4423;
+            --warm-cream: #faf7f2;
+            --soft-beige: #f0e6d8;
+            --text-dark: #2c1810;
+            --text-muted: #6b5a4a;
         }
 
         * {
@@ -36,15 +27,19 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
+        html {
+            scroll-behavior: smooth;
         }
 
-        /* Scanline effect */
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            background: var(--warm-cream);
+            color: var(--text-dark);
+            line-height: 1.9;
+            overflow-x: hidden;
+        }
+
+        /* Traditional Bengali pattern overlay */
         body::before {
             content: '';
             position: fixed;
@@ -52,1125 +47,936 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 0, 0, 0.015) 2px,
-                rgba(0, 0, 0, 0.015) 4px
-            );
+            background-image:
+                repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(220, 47, 2, 0.02) 80px, rgba(220, 47, 2, 0.02) 82px),
+                repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(27, 67, 50, 0.02) 80px, rgba(27, 67, 50, 0.02) 82px);
             pointer-events: none;
             z-index: 1000;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 40px;
-        }
-
-        /* Header */
-        header {
-            border-bottom: 3px solid var(--border);
-            padding: 40px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::after {
-            content: '';
-            position: absolute;
+        /* Navigation */
+        nav {
+            position: fixed;
             top: 0;
-            right: 0;
-            width: 300px;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--bg-secondary));
-            pointer-events: none;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .header-title h1 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(24px, 4vw, 42px);
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 8px;
-        }
-
-        .header-title h1 span {
-            color: var(--accent-info);
-        }
-
-        .header-meta {
-            display: flex;
-            gap: 30px;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .meta-item::before {
-            content: '>';
-            color: var(--accent-info);
-        }
-
-        /* Stats bar */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            margin: 30px 0;
-        }
-
-        .stat-item {
-            background: var(--bg-secondary);
-            padding: 25px 20px;
-            text-align: center;
-            position: relative;
-        }
-
-        .stat-item::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 3px;
-            background: var(--accent-info);
-        }
-
-        .stat-number {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 42px;
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-
-        .stat-item.critical .stat-number { color: var(--accent-critical); }
-        .stat-item.high .stat-number { color: var(--accent-high); }
-        .stat-item.medium .stat-number { color: var(--accent-medium); }
-        .stat-item.low .stat-number { color: var(--accent-low); }
-        .stat-item.total .stat-number { color: var(--accent-info); }
-
-        .stat-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-        }
-
-        /* Sections */
-        section {
-            margin: 50px 0;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .section-number {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--accent-info);
-            background: var(--bg-tertiary);
-            padding: 8px 14px;
-            border: 1px solid var(--border);
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        /* Issue cards */
-        .issue-grid {
-            display: grid;
-            gap: 20px;
-        }
-
-        .issue-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .issue-card::before {
-            content: '';
-            position: absolute;
             left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-        }
-
-        .issue-card.critical::before { background: var(--accent-critical); }
-        .issue-card.high::before { background: var(--accent-high); }
-        .issue-card.medium::before { background: var(--accent-medium); }
-        .issue-card.low::before { background: var(--accent-low); }
-
-        .issue-header {
+            right: 0;
+            z-index: 100;
+            padding: 25px 50px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            padding: 20px 25px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border);
+            align-items: center;
+            background: linear-gradient(180deg, rgba(250, 247, 242, 0.98) 0%, rgba(250, 247, 242, 0) 100%);
+            backdrop-filter: blur(10px);
         }
 
-        .issue-badge {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 6px 12px;
-            border: 1px solid;
-        }
-
-        .issue-badge.critical {
-            color: white;
-            border-color: var(--accent-critical);
-            background: var(--accent-critical);
-        }
-
-        .issue-badge.high {
-            color: white;
-            border-color: var(--accent-high);
-            background: var(--accent-high);
-        }
-
-        .issue-badge.medium {
-            color: white;
-            border-color: var(--accent-medium);
-            background: var(--accent-medium);
-        }
-
-        .issue-badge.low {
-            color: white;
-            border-color: var(--accent-low);
-            background: var(--accent-low);
-        }
-
-        .issue-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .issue-body {
-            padding: 20px 25px;
-        }
-
-        .issue-location {
+        .logo {
+            font-family: 'Galada', cursive;
+            font-size: 2rem;
+            color: var(--deep-red);
+            text-decoration: none;
+            position: relative;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed var(--border);
         }
 
-        .issue-location code {
-            background: var(--bg-primary);
-            padding: 4px 8px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--accent-info);
-            border: 1px solid var(--border);
+        .logo::before {
+            content: '❖';
+            color: var(--forest-green);
+            font-size: 1.2rem;
         }
 
-        .issue-description {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-        }
-
-        /* Code blocks */
-        .code-block {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-left: 3px solid var(--accent-info);
-            padding: 20px;
-            margin: 15px 0;
-            overflow-x: auto;
-        }
-
-        .code-block pre {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            line-height: 1.8;
-        }
-
-        .code-block .keyword { color: var(--code-keyword); }
-        .code-block .string { color: var(--code-string); }
-        .code-block .number { color: var(--code-number); }
-        .code-block .comment { color: var(--code-comment); font-style: italic; }
-        .code-block .function { color: var(--code-function); }
-        .code-block .class { color: var(--code-class); }
-
-        .line-number {
-            display: inline-block;
-            width: 40px;
-            color: var(--text-muted);
-            text-align: right;
-            margin-right: 20px;
-            user-select: none;
-        }
-
-        .error-line {
-            background: rgba(220, 38, 38, 0.08);
-            display: block;
-            margin: 0 -20px;
-            padding: 0 20px;
-            border-left: 3px solid var(--accent-critical);
-        }
-
-        /* Fix suggestions */
-        .fix-suggestion {
-            background: rgba(8, 145, 178, 0.06);
-            border: 1px dashed var(--accent-low);
-            padding: 15px 20px;
-            margin-top: 15px;
-        }
-
-        .fix-suggestion-header {
+        .nav-links {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--accent-low);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-        }
-
-        .fix-suggestion-content {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        /* Table */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 15px 20px;
-            text-align: left;
-            border: 1px solid var(--border);
-        }
-
-        .data-table th {
-            background: var(--bg-tertiary);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-
-        .data-table tr:hover {
-            background: var(--bg-tertiary);
-        }
-
-        .data-table code {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--accent-info);
-            background: var(--bg-primary);
-            padding: 3px 6px;
-            font-size: 12px;
-        }
-
-        /* Priority list */
-        .priority-list {
+            gap: 35px;
             list-style: none;
         }
 
-        .priority-item {
+        .nav-links a {
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--sunset-orange);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--deep-red);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
             display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            padding: 20px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 120px 40px 80px;
+            background:
+                radial-gradient(ellipse at 30% 70%, rgba(255, 186, 8, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 30%, rgba(45, 106, 79, 0.12) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 850px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            font-family: 'Tiro Bangla', serif;
+            font-size: 1.4rem;
+            color: var(--sunset-orange);
+            margin-bottom: 20px;
+            font-style: italic;
+            letter-spacing: 2px;
+        }
+
+        .hero-title {
+            font-family: 'Galada', cursive;
+            font-size: clamp(3.5rem, 10vw, 6.5rem);
+            color: var(--deep-teal);
+            line-height: 1.15;
+            margin-bottom: 30px;
+        }
+
+        .hero-title span {
+            color: var(--deep-red);
+        }
+
+        .hero-quote {
+            font-family: 'Tiro Bangla', serif;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-quote::before,
+        .hero-quote::after {
+            content: '"';
+            color: var(--golden-yellow);
+            font-size: 2.5rem;
+            position: absolute;
+        }
+
+        .hero-quote::before {
+            top: -15px;
+            left: -25px;
+        }
+
+        .hero-quote::after {
+            bottom: -30px;
+            right: -25px;
+        }
+
+        .hero-intro {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 2;
+        }
+
+        /* Decorative elements */
+        .decoration {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .deco-circle {
+            width: 200px;
+            height: 200px;
+            border: 2px solid var(--golden-yellow);
+            border-radius: 50%;
+            opacity: 0.15;
+            top: 15%;
+            left: 5%;
+        }
+
+        .deco-square {
+            width: 80px;
+            height: 80px;
+            border: 2px solid var(--forest-green);
+            transform: rotate(45deg);
+            opacity: 0.12;
+            bottom: 20%;
+            right: 8%;
+        }
+
+        .deco-flower {
+            font-size: 5rem;
+            color: var(--sunset-orange);
+            opacity: 0.08;
+            top: 20%;
+            right: 10%;
+        }
+
+        /* Introduction Section */
+        .intro {
+            padding: 100px 40px;
+            background: var(--soft-beige);
+        }
+
+        .intro-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .intro-text {
+            font-size: 1.2rem;
+            line-height: 2.2;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        .intro-text p {
+            margin-bottom: 20px;
+        }
+
+        .intro-text .highlight {
+            color: var(--deep-red);
+            font-weight: 600;
+        }
+
+        /* Destinations Section */
+        .destinations {
+            padding: 120px 40px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--sunset-orange);
+            letter-spacing: 4px;
             margin-bottom: 15px;
-            transition: all 0.2s;
-        }
-
-        .priority-item:hover {
-            border-color: var(--accent-info);
-            transform: translateX(5px);
-        }
-
-        .priority-badge {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 800;
-            padding: 8px 14px;
-            flex-shrink: 0;
             text-transform: uppercase;
         }
 
-        .priority-badge.p0 {
-            background: var(--accent-critical);
-            color: var(--bg-primary);
+        .section-title {
+            font-family: 'Galada', cursive;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: var(--deep-teal);
+            margin-bottom: 20px;
         }
 
-        .priority-badge.p1 {
-            background: var(--accent-high);
-            color: var(--bg-primary);
+        .destination-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 50px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        .priority-badge.p2 {
-            background: var(--accent-medium);
-            color: var(--bg-primary);
+        .destination-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s ease;
         }
 
-        .priority-badge.p3 {
-            background: #94a3b8;
+        .destination-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-image {
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--forest-green), var(--deep-teal));
+            opacity: 0.9;
+        }
+
+        .card-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 16px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--deep-teal);
+            z-index: 1;
+        }
+
+        .card-content {
+            padding: 30px;
+        }
+
+        .card-title {
+            font-family: 'Galada', cursive;
+            font-size: 2.2rem;
+            color: var(--deep-red);
+            margin-bottom: 8px;
+        }
+
+        .card-location {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-description {
+            color: var(--text-dark);
+            font-size: 1.05rem;
+            line-height: 1.9;
+            margin-bottom: 20px;
+        }
+
+        .card-highlights {
+            list-style: none;
+            padding-top: 15px;
+            border-top: 1px solid rgba(107, 90, 74, 0.15);
+        }
+
+        .card-highlights li {
+            padding: 6px 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-highlights li::before {
+            content: '◆';
+            color: var(--sunset-orange);
+            font-size: 0.6rem;
+        }
+
+        /* Region Section */
+        .regions {
+            padding: 120px 40px;
+            background: linear-gradient(180deg, var(--soft-beige) 0%, var(--warm-cream) 100%);
+        }
+
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 60px auto 0;
+        }
+
+        .region-card {
+            text-align: center;
+            padding: 40px 30px;
+            background: white;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .region-card:hover {
+            border-color: var(--sunset-orange);
+        }
+
+        .region-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .region-title {
+            font-family: 'Galada', cursive;
+            font-size: 1.8rem;
+            color: var(--deep-teal);
+            margin-bottom: 12px;
+        }
+
+        .region-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        /* Facts Section */
+        .facts {
+            padding: 100px 40px;
+            background: linear-gradient(135deg, var(--deep-teal), var(--forest-green));
             color: white;
         }
 
-        .priority-content h4 {
-            font-size: 15px;
+        .facts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 60px auto 0;
+        }
+
+        .fact-card {
+            text-align: center;
+            padding: 35px 25px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .fact-number {
+            font-family: 'Galada', cursive;
+            font-size: 3.5rem;
+            color: var(--golden-yellow);
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .fact-title {
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.9);
         }
 
-        .priority-content p {
-            font-size: 13px;
-            color: var(--text-secondary);
+        /* Tips Section */
+        .tips {
+            padding: 120px 40px;
         }
 
-        .priority-action {
-            font-size: 12px;
-            color: var(--accent-low);
-            margin-top: 8px;
+        .tips-content {
+            max-width: 1000px;
+            margin: 60px auto 0;
+        }
+
+        .tip-item {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 35px;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .tip-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .tip-icon {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            background: linear-gradient(135deg, rgba(232, 93, 4, 0.15), rgba(220, 47, 2, 0.15));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .tip-content h3 {
+            font-family: 'Galada', cursive;
+            font-size: 1.6rem;
+            color: var(--deep-teal);
+            margin-bottom: 10px;
+        }
+
+        .tip-content p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
         }
 
         /* Footer */
         footer {
-            border-top: 3px solid var(--border);
-            padding: 40px 0;
-            margin-top: 80px;
+            background: var(--text-dark);
+            color: white;
+            padding: 80px 40px 40px;
             text-align: center;
         }
 
-        .footer-content {
+        .footer-logo {
+            font-family: 'Galada', cursive;
+            font-size: 2.5rem;
+            color: var(--golden-yellow);
+            margin-bottom: 20px;
+        }
+
+        .footer-tagline {
+            font-family: 'Tiro Bangla', serif;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+
+        .footer-links {
             display: flex;
             justify-content: center;
-            align-items: center;
             gap: 40px;
-            font-size: 12px;
-            color: var(--text-secondary);
+            list-style: none;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
         }
 
-        .footer-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
         }
 
-        .footer-item::before {
-            content: '//';
-            color: var(--accent-info);
+        .footer-links a:hover {
+            color: var(--golden-yellow);
         }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .container {
-                padding: 0 20px;
-            }
-
-            .stats-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .stats-bar .stat-item:last-child {
-                grid-column: 1 / -1;
-            }
-
-            .header-content {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .header-meta {
-                flex-wrap: wrap;
-            }
+        .footer-bottom {
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
         }
 
-        /* Print styles */
-        @media print {
-            body::before {
+        /* Reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 20px;
+            }
+
+            .nav-links {
                 display: none;
             }
 
-            .issue-card {
-                break-inside: avoid;
+            .hero {
+                padding: 100px 20px 60px;
             }
-        }
 
-        /* Terminal cursor animation */
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
+            .hero-title {
+                font-size: 2.8rem;
+            }
 
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 18px;
-            background: var(--accent-info);
-            animation: blink 1s infinite;
-            vertical-align: middle;
-            margin-left: 5px;
+            .hero-quote {
+                font-size: 1.2rem;
+            }
+
+            .destinations,
+            .regions,
+            .facts,
+            .tips {
+                padding: 60px 20px;
+            }
+
+            .destination-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tip-item {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <div class="header-content">
-                <div class="header-title">
-                    <h1>CODE_REVIEW<span>_REPORT</span></h1>
-                    <p style="color: var(--text-secondary); margin-top: 10px;">RoboNeT Robotics & IoT Repository Analysis</p>
-                </div>
-                <div class="header-meta">
-                    <div class="meta-item">
-                        <span>Date: January 17, 2026</span>
-                    </div>
-                    <div class="meta-item">
-                        <span>Files Analyzed: 19</span>
-                    </div>
-                    <div class="meta-item">
-                        <span>Language: C++/Arduino</span>
-                    </div>
-                </div>
-            </div>
-        </header>
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo">ঘুরাঘুরি</a>
+        <ul class="nav-links">
+            <li><a href="#about">পরিচিতি</a></li>
+            <li><a href="#destinations">গন্তব্য</a></li>
+            <li><a href="#regions">বিভাগ</a></li>
+            <li><a href="#tips">টিপস</a></li>
+        </ul>
+    </nav>
 
-        <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stat-item critical">
-                <div class="stat-number">5</div>
-                <div class="stat-label">Critical</div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="decoration deco-circle"></div>
+        <div class="decoration deco-square"></div>
+        <div class="decoration deco-flower">❀</div>
+
+        <div class="hero-content">
+            <p class="hero-subtitle">যাত্রা কাহিনী</p>
+            <h1 class="hero-title">
+                সুন্দর <span>বাংলাদেশ</span>
+            </h1>
+            <p class="hero-quote">ভ্রমণ মানে নতুন কিছু দেখা নয়, নতুন চোখে নিজেকে দেখা</p>
+            <p class="hero-intro">
+                ছোট্ট এক দেশ, কিন্তু এখানে আছে হাজারো রূপ। পাহাড়-সমুদ্র-নদী, সবুজের অরণ্য, ঐতিহ্যবাহী স্থাপত্য—সব মিলিয়ে এক অপূর্ব সমাহার।
+            </p>
+        </div>
+    </section>
+
+    <!-- Introduction Section -->
+    <section class="intro" id="about">
+        <div class="intro-content reveal">
+            <div class="section-header">
+                <span class="section-tag">পরিচিতি</span>
+                <h2 class="section-title">বাংলাদেশ: সৌন্দর্যের ভাণ্ডার</h2>
             </div>
-            <div class="stat-item high">
-                <div class="stat-number">8</div>
-                <div class="stat-label">High</div>
-            </div>
-            <div class="stat-item medium">
-                <div class="stat-number">10</div>
-                <div class="stat-label">Medium</div>
-            </div>
-            <div class="stat-item low">
-                <div class="stat-number">12+</div>
-                <div class="stat-label">Low</div>
-            </div>
-            <div class="stat-item total">
-                <div class="stat-number">35+</div>
-                <div class="stat-label">Total Issues</div>
+            <div class="intro-text">
+                <p>
+                    বাংলাদেশ—দক্ষিণ এশিয়ার একটি ক্ষুদ্র রাষ্ট্র। কিন্তু এর <span class="highlight">প্রাকৃতিক সৌন্দর্য</span> ও সাংস্কৃতিক ঐতিহ্যের পরিধি বিশাল। বিশ্বের দীর্ঘতম সমুদ্র সৈকত থেকে শুরু করে বৃহত্তম ম্যানগ্রোভ ফরেস্ট, সবুজে ঘেরা পাহাড়ি এলাকা থেকে শুরু করে ঐতিহাসিক স্থাপনা—সবই মিলেমিশে এক অপার আকর্ষণ সৃষ্টি করেছে।
+                </p>
+                <p>
+                    <span class="highlight">ছয়টি ঋতু</span>—এই দেশে সত্যিই ছয়টি ঋতু দেখা যায়। গ্রীষ্মের রুদ্র রূপ, বর্ষার ধারাদপ্ত, শরৎের মেঘের খেলা, হেমন্তের সোনালী আভা, শীতের কুয়াশাচ্ছন্ন সকাল আর বসন্তের রঙের উৎসব—প্রতিটি ঋতুতে বাংলাদেশ নিজেকে নতুন রূপে উপস্থাপন করে।
+                </p>
+                <p>
+                    প্রায় <span class="highlight">১৭ কোটি মানুষ</span>ের এই দেশে হাজার বছরের ইতিহাস ও সংস্কৃতি ধারণ করে আছে প্রতিটি পললিতায়, প্রতিটি ইটে-পাথরে। প্রাচীন বৌদ্ধ বিহার থেকে শুরু করে মোগল স্থাপত্য, ব্রিটিশ আমলের ভবন থেকে শুরু করে আধুনিক স্থাপত্য—সবই এখানে মিলেমিশে এক।
+                </p>
             </div>
         </div>
+    </section>
 
-        <!-- Critical Issues Section -->
-        <section>
-            <div class="section-header">
-                <span class="section-number">01</span>
-                <h2 class="section-title">Critical Issues</h2>
-            </div>
+    <!-- Destinations Section -->
+    <section class="destinations" id="destinations">
+        <div class="section-header reveal">
+            <span class="section-tag">✦ জনপ্রিয় গন্তব্য ✦</span>
+            <h2 class="section-title">দেখার মতো স্থান</h2>
+        </div>
 
-            <div class="issue-grid">
-                <!-- MQ-2 Missing Brace -->
-                <div class="issue-card critical">
-                    <div class="issue-header">
-                        <span class="issue-badge critical">CRITICAL</span>
-                        <h3 class="issue-title">Missing Closing Brace - Syntax Error</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>02. Arduino/Sensors_Motors/MQ-2 Gas Sensor/main.ino</code>
-                            <span>Line: 16</span>
-                        </div>
-                        <p class="issue-description">The loop() function is not properly closed. This code will not compile.</p>
-                        <div class="code-block">
-                            <pre><span class="line-number">13</span><span class="keyword">void</span> <span class="function">loop</span>() {
-<span class="line-number">14</span>  <span class="keyword">int</span> gasLevel = <span class="function">analogRead</span>(mq2Pin);
-<span class="line-number">15</span>  Serial.<span class="function">println</span>(gasLevel);
-<span class="line-number">16</span>  <span class="function">delay</span>(<span class="number">500</span>);
-<span class="line-number">17</span>  <span class="error-line"><span class="comment">// MISSING: }</span></span>
-<span class="line-number">18</span>}</pre>
-                        </div>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Add closing brace: <code>}</code> after line 16</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wrong File Extension -->
-                <div class="issue-card critical">
-                    <div class="issue-header">
-                        <span class="issue-badge critical">CRITICAL</span>
-                        <h3 class="issue-title">Wrong File Extension - Arduino Code in .py Files</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>Files (3):</span>
-                            <code>Projects/RoboQuest Tasks/01. Task-1 (Blutooth Control)/solution.py</code>
-                            <code>Projects/RoboQuest Tasks/02. Task-2/solution_task_02.py</code>
-                            <code>Projects/RoboQuest Tasks/04. Task-4/solution_coordinates.py</code>
-                        </div>
-                        <p class="issue-description">These files contain Arduino C++ code but have .py extension. Contains #include, void setup(), etc.</p>
-                        <div class="code-block">
-                            <pre><span class="line-number">1</span><span class="keyword">#include</span> <span class="string">"BluetoothSerial.h"</span>
-<span class="line-number">2</span><span class="keyword">#include</span> <span class="string">"math.h"</span>
-<span class="line-number">3</span><span class="keyword">void</span> <span class="function">setup</span>() {
-<span class="line-number">4</span>  Serial.<span class="function">begin</span>(<span class="number">9600</span>);</pre>
-                        </div>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Rename all three files: .py &rarr; .ino</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Empty File -->
-                <div class="issue-card critical">
-                    <div class="issue-header">
-                        <span class="issue-badge critical">CRITICAL</span>
-                        <h3 class="issue-title">Empty File - No Implementation</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>06. Graphical User Interface/Examples/gui_dashboard.py</code>
-                        </div>
-                        <p class="issue-description">This file is completely empty (only whitespace). It should either contain implementation or be removed.</p>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Implement the GUI dashboard or remove the placeholder file</p>
-                        </div>
-                    </div>
+        <div class="destination-grid">
+            <div class="destination-card reveal">
+                <div class="card-image"></div>
+                <span class="card-badge">⭐ সবুজের রাজ্য</span>
+                <div class="card-content">
+                    <h3 class="card-title">সিলেট</h3>
+                    <p class="card-location">📍 উত্তর-পূর্ব বাংলাদেশ</p>
+                    <p class="card-description">
+                        চা বাগানের অপার সৌন্দর্য। জাফলংয়ের পাথর খেকে, বিছনাকলির ঝর্ণা, লালাখালের নীল জল—প্রকৃতিপ্রেমীদের স্বর্গ। বিশ্বের বৃহত্তম চা বাগান মালনীছড়া এখানেই।
+                    </p>
+                    <ul class="card-highlights">
+                        <li>জাফলং ও বিছনাকলি</li>
+                        <li>লালাখাল ও পানছড়ি</li>
+                        <li>মালনীছড়া চা বাগান</li>
+                        <li>শ্রীচৈতন্য জিয়ুড়া মন্দির</li>
+                    </ul>
                 </div>
             </div>
-        </section>
 
-        <!-- High Priority Bugs -->
-        <section>
-            <div class="section-header">
-                <span class="section-number">02</span>
-                <h2 class="section-title">RoboQuest GPS Car - Bugs</h2>
-            </div>
-
-            <div class="issue-grid">
-                <!-- Infinite Loop Bug -->
-                <div class="issue-card high">
-                    <div class="issue-header">
-                        <span class="issue-badge high">HIGH</span>
-                        <h3 class="issue-title">Infinite Loop Blocks GPS Updates</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
-                            <span>Lines: 200-224</span>
-                        </div>
-                        <p class="issue-description">LeftRight() contains while(true) loop with no timeout. If compass is noisy or fails, robot spins indefinitely blocking all GPS updates.</p>
-                        <div class="code-block">
-                            <pre><span class="line-number">200</span><span class="keyword">void</span> <span class="function">LeftRight</span>() {
-<span class="line-number">201</span>  <span class="keyword">while</span> (<span class="keyword">true</span>) {  <span class="comment">// DANGER: No timeout!</span>
-<span class="line-number">202</span>    currentHeading = <span class="function">readCompass</span>();
-<span class="line-number">203</span>    targetHeading = <span class="function">getAnglee</span>(...);
-<span class="line-number">204</span>    <span class="keyword">if</span> (headingDiff <= <span class="number">8</span>) <span class="keyword">break</span>;</pre>
-                        </div>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Add max iterations counter or millis() timeout</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Typos -->
-                <div class="issue-card high">
-                    <div class="issue-header">
-                        <span class="issue-badge high">HIGH</span>
-                        <h3 class="issue-title">Multiple Spelling Errors</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
-                            <span>Lines: 84, 99, 113, 118</span>
-                        </div>
-                        <p class="issue-description">Function names and strings contain typos that look unprofessional.</p>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Current</th>
-                                    <th>Should Be</th>
-                                    <th>Type</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><code>stopp()</code></td>
-                                    <td><code>stop()</code></td>
-                                    <td>Function name</td>
-                                </tr>
-                                <tr>
-                                    <td><code>goo()</code></td>
-                                    <td><code>go()</code></td>
-                                    <td>Function name</td>
-                                </tr>
-                                <tr>
-                                    <td><code>getAnglee()</code></td>
-                                    <td><code>getAngle()</code></td>
-                                    <td>Function name</td>
-                                </tr>
-                                <tr>
-                                    <td><code>"Autonomus System"</code></td>
-                                    <td><code>"Autonomous System"</code></td>
-                                    <td>String literal</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Excessive Delays -->
-                <div class="issue-card high">
-                    <div class="issue-header">
-                        <span class="issue-badge high">HIGH</span>
-                        <h3 class="issue-title">Excessive Blocking Delays</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
-                            <span>Lines: 119, 246</span>
-                        </div>
-                        <p class="issue-description">delay(100000) = 100 second blocking delay. System appears frozen for over 1.5 minutes.</p>
-                        <div class="code-block">
-                            <pre><span class="line-number">118</span>        <span class="keyword">if</span> (i == size) {
-<span class="line-number">119</span>          <span class="function">stopp</span>();
-<span class="line-number">120</span>          <span class="function">delay</span>(<span class="number">100000</span>);  <span class="comment">// 100 seconds!</span></pre>
-                        </div>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Use non-blocking millis() timer or reasonable delay (5000ms max)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Hardcoded Waypoints -->
-                <div class="issue-card high">
-                    <div class="issue-header">
-                        <span class="issue-badge high">HIGH</span>
-                        <h3 class="issue-title">Hardcoded GPS Coordinates (Privacy Issue)</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
-                            <span>Lines: 41-47</span>
-                        </div>
-                        <p class="issue-description">GPS coordinates are hardcoded in the source file, revealing specific campus locations (UIU coordinates: 23.79N, 90.44E).</p>
-                        <div class="code-block">
-                            <pre><span class="line-number">41</span><span class="keyword">float</span> targetList[<span class="number">5</span>][<span class="number">2</span>] = {
-<span class="line-number">42</span>  { <span class="number">23.7993059</span>, <span class="number">90.4493381</span> },  <span class="comment">// UIU Campus</span>
-<span class="line-number">43</span>  { <span class="number">23.7995985</span>, <span class="number">90.4491094</span> },
-<span class="line-number">44</span>  ...</pre>
-                        </div>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Use placeholder coordinates or load from config file/SD card</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Unused Variable -->
-                <div class="issue-card medium">
-                    <div class="issue-header">
-                        <span class="issue-badge medium">MEDIUM</span>
-                        <h3 class="issue-title">Unused Redundant Variable</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>Projects/RoboQuest- A Self Driving GPS tracking car/main.ino</code>
-                            <span>Line: 27</span>
-                        </div>
-                        <p class="issue-description">Variable <code>float pi = PI;</code> is declared but PI is already a built-in constant.</p>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Remove line 27 - use built-in PI constant directly</p>
-                        </div>
-                    </div>
+            <div class="destination-card reveal">
+                <div class="card-image" style="background: linear-gradient(135deg, #e85d04, #dc2f02);"></div>
+                <span class="card-badge">🌊 নীল জলরাশি</span>
+                <div class="card-content">
+                    <h3 class="card-title">কক্সবাজার</h3>
+                    <p class="card-location">📍 দক্ষিণ-পূর্ব উপকূল</p>
+                    <p class="card-description">
+                        বিশ্বের দীর্ঘতম সমুদ্র সৈকত—১২০ কিলোমিটার জুড়ে বিস্তৃত বালুকাবেলা। ভোরবেলার সূর্যোদয় আর সন্ধ্যার লাল আকাশ—দৃশ্য দেখলে চোখ জুড়িয়ে যায়।
+                    </p>
+                    <ul class="card-highlights">
+                        <li>কক্সবাজার সমুদ্র সৈকত</li>
+                        <li>হিমছড়ি ঝর্ণা</li>
+                        <li>মেরিন ড্রাইভ</li>
+                        <li>সেন্ট মার্টিন দ্বীপ</li>
+                    </ul>
                 </div>
             </div>
-        </section>
 
-        <!-- Logic Issues -->
-        <section>
-            <div class="section-header">
-                <span class="section-number">03</span>
-                <h2 class="section-title">Logic Issues</h2>
-            </div>
-
-            <div class="issue-grid">
-                <!-- Button Debouncing -->
-                <div class="issue-card high">
-                    <div class="issue-header">
-                        <span class="issue-badge high">HIGH</span>
-                        <h3 class="issue-title">No Button Debouncing</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>02. Arduino/GPIO/button_led_control/main.ino</code>
-                            <span>Lines: 11-21</span>
-                        </div>
-                        <p class="issue-description">Button read without debouncing will cause multiple triggers and erratic behavior due to contact bounce.</p>
-                        <div class="code-block">
-                            <pre><span class="line-number">11</span><span class="keyword">void</span> <span class="function">loop</span>() {
-<span class="line-number">12</span>  buttonState = <span class="function">digitalRead</span>(buttonPin);  <span class="comment">// No debounce!</span>
-<span class="line-number">13</span>  <span class="keyword">if</span> (buttonState == HIGH) {
-<span class="line-number">14</span>    <span class="function">digitalWrite</span>(ledPin, HIGH);</pre>
-                        </div>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Add 20-50ms delay or use millis() based debouncing</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Serial Flood -->
-                <div class="issue-card medium">
-                    <div class="issue-header">
-                        <span class="issue-badge medium">MEDIUM</span>
-                        <h3 class="issue-title">Serial Output Flood</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>02. Arduino/GPIO/button_led_control/main.ino</code>
-                            <span>Lines: 16, 19</span>
-                        </div>
-                        <p class="issue-description">Serial.println() on every loop iteration floods output with duplicate messages.</p>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Print only on state change, not every iteration</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Redundant Calculation -->
-                <div class="issue-card low">
-                    <div class="issue-header">
-                        <span class="issue-badge low">LOW</span>
-                        <h3 class="issue-title">Redundant Calculation</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>02. Arduino/Sensors_Motors/HMC5883L Sensor (Magnetometer)/main.ino</code>
-                            <span>Line: 30</span>
-                        </div>
-                        <p class="issue-description">Expression contains redundant <code>(-0)</code> which has no effect.</p>
-                        <div class="code-block">
-                            <pre><span class="line-number">30</span><span class="keyword">float</span> declinationAngle = ((<span class="number">-0</span>) + (<span class="number">29</span> / <span class="number">60.0</span>)) / (<span class="number">180</span> / M_PI);
-<span class="line-number">--</span>                        <span class="comment">//   ^^^^ redundant</span></pre>
-                        </div>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Remove (-0): <code>(29 / 60.0) / (180 / M_PI)</code></p>
-                        </div>
-                    </div>
+            <div class="destination-card reveal">
+                <div class="card-image" style="background: linear-gradient(135deg, #6b4423, #2d6a4f);"></div>
+                <span class="card-badge">🏔️ মেঘের দেশ</span>
+                <div class="card-content">
+                    <h3 class="card-title">বান্দরবান</h3>
+                    <p class="card-location">📍 দক্ষিণ-পূর্ব পাহাড়ি অঞ্চল</p>
+                    <p class="card-description">
+                        মেঘের উপর দিয়ে হাঁটার অনুভূতি। তাজিংডং—বাংলাদেশের সর্বোচ্চ শৃঙ্গ। বগালেকের মেঘ, আমিয়াখুমের ঝর্ণা—প্রকৃতির অপূর্ব শিল্প।
+                    </p>
+                    <ul class="card-highlights">
+                        <li>তাজিংডং ও কেওক্রাডং</li>
+                        <li>বগালেক ও রুমা পাহাড়</li>
+                        <li>আমিয়াখুম ও রিসাং ঝর্ণা</li>
+                        <li>শৈলপ্রপাত</li>
+                    </ul>
                 </div>
             </div>
-        </section>
 
-        <!-- Memory & Performance -->
-        <section>
-            <div class="section-header">
-                <span class="section-number">04</span>
-                <h2 class="section-title">Memory & Performance Concerns</h2>
-            </div>
-
-            <div class="issue-grid">
-                <div class="issue-card medium">
-                    <div class="issue-header">
-                        <span class="issue-badge medium">MEDIUM</span>
-                        <h3 class="issue-title">Heap Fragmentation Risk</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>Projects/RoboQuest Tasks/02. Task-2/solution_task_02.py</code>
-                            <span>Line: 61</span>
-                        </div>
-                        <p class="issue-description">Using <code>std::vector&lt;GpsLogEntry&gt;</code> on ESP32 for long trips can cause heap fragmentation and crashes.</p>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Use fixed-size array or circular buffer with max entries limit</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="issue-card low">
-                    <div class="issue-header">
-                        <span class="issue-badge low">LOW</span>
-                        <h3 class="issue-title">GPS Precision Loss</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>File:</span>
-                            <code>All GPS navigation files</code>
-                        </div>
-                        <p class="issue-description">Using <code>float</code> for GPS coordinates loses ~1m precision compared to <code>double</code>. May affect navigation accuracy.</p>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Use <code>double</code> for coordinates if precision is critical</p>
-                        </div>
-                    </div>
+            <div class="destination-card reveal">
+                <div class="card-image" style="background: linear-gradient(135deg, #1b4332, #2d6a4f);"></div>
+                <span class="card-badge">🌿 রয়েল বেঙ্গল</span>
+                <div class="card-content">
+                    <h3 class="card-title">সুন্দরবন</h3>
+                    <p class="card-location">📍 দক্ষিণ-পশ্চিম বাংলাদেশ</p>
+                    <p class="card-description">
+                        বিশ্বের বৃহত্তম ম্যানগ্রোভ ফরেস্ট। রয়েল বেঙ্গল টাইগারের আবাসস্থল। হাজার হাজার প্রজাতির প্রাণী ও উদ্ভিদের খেলার মাঠ।
+                    </p>
+                    <ul class="card-highlights">
+                        <li>রয়েল বেঙ্গল টাইগার</li>
+                        <li>ম্যানগ্রোভ ফরেস্ট</li>
+                        <li>হিরণ পয়েন্ট</li>
+                        <li>করমজল ও কটকা</li>
+                    </ul>
                 </div>
             </div>
-        </section>
 
-        <!-- Code Quality -->
-        <section>
-            <div class="section-header">
-                <span class="section-number">05</span>
-                <h2 class="section-title">Code Quality Issues</h2>
-            </div>
-
-            <div class="issue-grid">
-                <div class="issue-card low">
-                    <div class="issue-header">
-                        <span class="issue-badge low">LOW</span>
-                        <h3 class="issue-title">Magic Numbers Throughout</h3>
-                    </div>
-                    <div class="issue-body">
-                        <p class="issue-description">PWM values like 150, 120, 128 appear without explanation. Heading tolerance of 8 degrees and distance threshold of 5 meters are unnamed.</p>
-                        <div class="code-block">
-                            <pre><span class="comment">// Instead of this:</span>
-<span class="function">ledcWrite</span>(<span class="number">0</span>, <span class="number">150</span>);  <span class="comment">// What is 150?</span>
-
-<span class="comment">// Use this:</span>
-<span class="keyword">const</span> <span class="keyword">int</span> MOTOR_SPEED_FULL = <span class="number">150</span>;
-<span class="keyword">const</span> <span class="keyword">float</span> HEADING_TOLERANCE_DEG = <span class="number">8.0</span>;
-<span class="keyword">const</span> <span class="keyword">float</span> TARGET_REACH_THRESHOLD_M = <span class="number">5.0</span>;</pre>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="issue-card medium">
-                    <div class="issue-header">
-                        <span class="issue-badge medium">MEDIUM</span>
-                        <h3 class="issue-title">No Sensor Error Recovery</h3>
-                    </div>
-                    <div class="issue-body">
-                        <p class="issue-description">All sensor files use <code>while(1);</code> on failure, requiring hard reset. No retry mechanism or graceful degradation.</p>
-                        <div class="code-block">
-                            <pre><span class="line-number">12</span>  <span class="keyword">if</span> (!mag.<span class="function">begin</span>()) {
-<span class="line-number">13</span>    Serial.<span class="function">println</span>(<span class="string">"Ooops, no HMC5883 detected..."</span>);
-<span class="line-number">14</span>    <span class="keyword">while</span> (<span class="number">1</span>);  <span class="comment">// Dead forever</span>
-<span class="line-number">15</span>  }</pre>
-                        </div>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Add retry count and fallback to dead reckoning mode</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="issue-card low">
-                    <div class="issue-header">
-                        <span class="issue-badge low">LOW</span>
-                        <h3 class="issue-title">Folder Name Typo</h3>
-                    </div>
-                    <div class="issue-body">
-                        <div class="issue-location">
-                            <span>Folder:</span>
-                            <code>Projects/RoboQuest Tasks/01. Task-1 (Blutooth Control)/</code>
-                        </div>
-                        <p class="issue-description">"Blutooth" should be "Bluetooth"</p>
-                        <div class="fix-suggestion">
-                            <div class="fix-suggestion-header">
-                                <span>[ FIX ]</span>
-                            </div>
-                            <p class="fix-suggestion-content">Rename folder: "Blutooth Control" &rarr; "Bluetooth Control"</p>
-                        </div>
-                    </div>
+            <div class="destination-card reveal">
+                <div class="card-image" style="background: linear-gradient(135deg, #ffba08, #e85d04);"></div>
+                <span class="card-badge">🏛️ ঐতিহ্য</span>
+                <div class="card-content">
+                    <h3 class="card-title">ঢাকা</h3>
+                    <p class="card-location">📍 মধ্য বাংলাদেশ</p>
+                    <p class="card-description">
+                        চারশত বছরের পুরনো শহর। মোগল স্থাপত্যের নিদর্শন—লালবাগ কেল্লা, আহসান মঞ্জিল। আধুনিকতার ছোঁয়ায় সাজে স্টার মসজিদ।
+                    </p>
+                    <ul class="card-highlights">
+                        <li>লালবাগ কেল্লা</li>
+                        <li>আহসান মঞ্জিল</li>
+                        <li>স্টার মসজিদ</li>
+                        <li>সোহরাওয়ার্দী উদ্যান</li>
+                    </ul>
                 </div>
             </div>
-        </section>
 
-        <!-- Priority Action List -->
-        <section>
-            <div class="section-header">
-                <span class="section-number">06</span>
-                <h2 class="section-title">Recommended Fix Priority</h2>
-            </div>
-
-            <ul class="priority-list">
-                <li class="priority-item">
-                    <span class="priority-badge p0">P0</span>
-                    <div class="priority-content">
-                        <h4>Add missing closing brace to MQ-2 Gas Sensor</h4>
-                        <p>File: 02. Arduino/Sensors_Motors/MQ-2 Gas Sensor/main.ino</p>
-                        <p class="priority-action">&rarr; ACTION: Add "}" after line 16</p>
-                    </div>
-                </li>
-                <li class="priority-item">
-                    <span class="priority-badge p0">P0</span>
-                    <div class="priority-content">
-                        <h4>Rename incorrect file extensions</h4>
-                        <p>3 files with .py extension containing Arduino C++ code</p>
-                        <p class="priority-action">&rarr; ACTION: Rename solution.py, solution_task_02.py, solution_coordinates.py to .ino</p>
-                    </div>
-                </li>
-                <li class="priority-item">
-                    <span class="priority-badge p1">P1</span>
-                    <div class="priority-content">
-                        <h4>Add timeout to LeftRight() infinite loop</h4>
-                        <p>Currently blocks GPS updates indefinitely if compass fails</p>
-                        <p class="priority-action">&rarr; ACTION: Add max iterations or millis() timeout</p>
-                    </div>
-                </li>
-                <li class="priority-item">
-                    <span class="priority-badge p1">P1</span>
-                    <div class="priority-content">
-                        <h4>Add button debouncing to button_led_control</h4>
-                        <p>Will cause erratic behavior without debouncing</p>
-                        <p class="priority-action">&rarr; ACTION: Add 20-50ms debounce delay or state tracking</p>
-                    </div>
-                </li>
-                <li class="priority-item">
-                    <span class="priority-badge p1">P1</span>
-                    <div class="priority-content">
-                        <h4>Replace excessive blocking delays</h4>
-                        <p>delay(100000) causes 100-second freeze</p>
-                        <p class="priority-action">&rarr; ACTION: Use non-blocking millis() timers</p>
-                    </div>
-                </li>
-                <li class="priority-item">
-                    <span class="priority-badge p2">P2</span>
-                    <div class="priority-content">
-                        <h4>Fix spelling errors in function names</h4>
-                        <p>stopp(), goo(), getAnglee(), "Autonomus"</p>
-                        <p class="priority-action">&rarr; ACTION: Rename to stop(), go(), getAngle(), "Autonomous"</p>
-                    </div>
-                </li>
-                <li class="priority-item">
-                    <span class="priority-badge p2">P2</span>
-                    <div class="priority-content">
-                        <h4>Remove hardcoded GPS coordinates</h4>
-                        <p>Privacy concern - reveals campus location</p>
-                        <p class="priority-action">&rarr; ACTION: Use placeholder coordinates or config file</p>
-                    </div>
-                </li>
-                <li class="priority-item">
-                    <span class="priority-badge p3">P3</span>
-                    <div class="priority-content">
-                        <h4>Implement or remove gui_dashboard.py</h4>
-                        <p>File is completely empty</p>
-                        <p class="priority-action">&rarr; ACTION: Implement GUI or delete placeholder</p>
-                    </div>
-                </li>
-                <li class="priority-item">
-                    <span class="priority-badge p3">P3</span>
-                    <div class="priority-content">
-                        <h4>Replace magic numbers with named constants</h4>
-                        <p>PWM values 150, 120, 128 need semantic names</p>
-                        <p class="priority-action">&rarr; ACTION: Define MOTOR_SPEED_FULL, HEADING_TOLERANCE, etc.</p>
-                    </div>
-                </li>
-                <li class="priority-item">
-                    <span class="priority-badge p3">P3</span>
-                    <div class="priority-content">
-                        <h4>Add sensor error recovery logic</h4>
-                        <p>All sensors use while(1); on failure</p>
-                        <p class="priority-action">&rarr; ACTION: Implement retry with fallback mode</p>
-                    </div>
-                </li>
-            </ul>
-        </section>
-
-        <!-- Footer -->
-        <footer>
-            <div class="footer-content">
-                <div class="footer-item">
-                    <span>Report Generated: 2026-01-17</span>
-                </div>
-                <div class="footer-item">
-                    <span>Analyzer: Claude Code Review System</span>
-                </div>
-                <div class="footer-item">
-                    <span>Repository: RoboNeT-Robotics-Network-IoT-Repository</span>
+            <div class="destination-card reveal">
+                <div class="card-image" style="background: linear-gradient(135deg, #2d6a4f, #1b4332);"></div>
+                <span class="card-badge">🦆 পাখির কলরব</span>
+                <div class="card-content">
+                    <h3 class="card-title">হাকিমপুর</h3>
+                    <p class="card-location">📍 উত্তর-পশ্চিম বাংলাদেশ</p>
+                    <p class="card-description">
+                        দেশি-বিদেশি পরিযায়ী পাখিদের ক্ষণস্থায়ী ঠিকানা। শীতে হাজার হাজার পাখির কলরবে মুখর হয়ে ওঠে জলাভূমি।
+                    </p>
+                    <ul class="card-highlights">
+                        <li>হাজারো পরিযায়ী পাখি</li>
+                        <li>জলাভূমি ও বিল</li>
+                        <li>শীতকালীন পাখি দর্শন</li>
+                        <li>প্রাকৃতিক সৌন্দর্য</li>
+                    </ul>
                 </div>
             </div>
-            <div style="margin-top: 20px; color: var(--text-muted);">
-                <span class="cursor"></span>
+        </div>
+    </section>
+
+    <!-- Regions Section -->
+    <section class="regions" id="regions">
+        <div class="section-header reveal">
+            <span class="section-tag">✦ বিভিন্ন অঞ্চল ✦</span>
+            <h2 class="section-title">প্রতিটি অঞ্চলের নিজস্ব রূপ</h2>
+        </div>
+
+        <div class="region-grid">
+            <div class="region-card reveal">
+                <div class="region-icon">🏔️</div>
+                <h3 class="region-title">পার্বত্য অঞ্চল</h3>
+                <p class="region-desc">রাঙামাটি, বান্দরবান, খাগড়াছড়ি—পাহাড়ি ঢল, ঝর্ণা আর আদিবাসী সংস্কৃতির মেলা</p>
             </div>
-        </footer>
-    </div>
+            <div class="region-card reveal">
+                <div class="region-icon">🌾</div>
+                <h3 class="region-title">উত্তরবঙ্গ</h3>
+                <p class="region-desc">চা বাগান, পাহাড়ি নদী, মিষ্টি আর ঐতিহ্যের দেশ সিলেট ও সুনামগঞ্জ</p>
+            </div>
+            <div class="region-card reveal">
+                <div class="region-icon">🌊</div>
+                <h3 class="region-title">উপকূলীয় অঞ্চল</h3>
+                <p class="region-desc">কক্সবাজার, সেন্ট মার্টিন, কুতুবদিয়া—নীল জলরাশির অপার আকর্ষণ</p>
+            </div>
+            <div class="region-card reveal">
+                <div class="region-icon">🏛️</div>
+                <h3 class="region-title">মধ্যাঞ্চল</h3>
+                <p class="region-desc">ঢাকা, মুন্সীগঞ্জ, নারায়ণগঞ্জ—ইতিহাস ও আধুনিকতার মিলনস্থল</p>
+            </div>
+            <div class="region-card reveal">
+                <div class="region-icon">🌿</div>
+                <h3 class="region-title">দক্ষিণ-পশ্চিম</h3>
+                <p class="region-desc">সুন্দরবন, খুলনা, যশোর—বনাঞ্চল আর ঐতিহ্যের সমাহার</p>
+            </div>
+            <div class="region-card reveal">
+                <div class="region-icon">🦆</div>
+                <h3 class="region-title">উত্তর-পশ্চিম</h3>
+                <p class="region-desc">রাজশাহী, পাবনা, দিনাজপুর—ফলের ভাণ্ডার আর পাখির কলরব</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Facts Section -->
+    <section class="facts">
+        <div class="section-header reveal">
+            <span class="section-tag" style="color: var(--golden-yellow);">✦ আকর্ষণীয় তথ্য ✦</span>
+            <h2 class="section-title" style="color: white;">বাংলাদেশ সম্পর্কে</h2>
+        </div>
+
+        <div class="facts-grid">
+            <div class="fact-card reveal">
+                <div class="fact-number">৬৪</div>
+                <div class="fact-title">জেলা</div>
+            </div>
+            <div class="fact-card reveal">
+                <div class="fact-number">১২০</div>
+                <div class="fact-title">কিলোমিটার সমুদ্র সৈকত</div>
+            </div>
+            <div class="fact-card reveal">
+                <div class="fact-number">৬</div>
+                <div class="fact-title">ঋতু</div>
+            </div>
+            <div class="fact-card reveal">
+                <div class="fact-number">১০,০০০+</div>
+                <div class="fact-title">ফুলের প্রজাতি</div>
+            </div>
+            <div class="fact-card reveal">
+                <div class="fact-number">৫০০+</div>
+                <div class="fact-title">পাখির প্রজাতি</div>
+            </div>
+            <div class="fact-card reveal">
+                <div class="fact-number">১,২০০</div>
+                <div class="fact-title">বছরের ঐতিহ্য</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section class="tips" id="tips">
+        <div class="section-header reveal">
+            <span class="section-tag">✦ ভ্রমণ টিপস ✦</span>
+            <h2 class="section-title">ভ্রমণের আগে জানুন</h2>
+        </div>
+
+        <div class="tips-content">
+            <div class="tip-item reveal">
+                <div class="tip-icon">📅</div>
+                <div class="tip-content">
+                    <h3>সময় বুঝে ভ্রমণ</h3>
+                    <p>শরৎকালে (সেপ্টেম্বর-অক্টোবর) আকাশ পরিষ্কার থাকে, ভ্রমণের সেরা সময়। বর্ষায় সমুদ্র ও পাহাড় দেখতে সুন্দর, কিন্তু যাতায়াত কঠিন হতে পারে।</p>
+                </div>
+            </div>
+            <div class="tip-item reveal">
+                <div class="tip-icon">👕</div>
+                <div class="tip-content">
+                    <h3>পোশাক নির্বাচন</h3>
+                    <p>আবহাওয়া অনুযায়ী পোশাক সাথে রাখুন। পাহাড়ি এলাকায় গরম কাপড়, সমুদ্রে সানস্ক্রিন ও হ্যাট, বর্ষায় ছাতা ও রেইনকোট জরুরি।</p>
+                </div>
+            </div>
+            <div class="tip-item reveal">
+                <div class="tip-icon">🍽️</div>
+                <div class="tip-content">
+                    <h3>স্থানীয় খাবার চেখুন</h3>
+                    <p>প্রতিটি অঞ্চলের নিজস্ব খাবারের ঐতিহ্য আছে। সিলেটের হাঁড়ির মাংস, কক্সের সামুদ্রিক মাছ, রাজশাহীর মিষ্টি—সব চেখে দেখুন।</p>
+                </div>
+            </div>
+            <div class="tip-item reveal">
+                <div class="tip-icon">🏠</div>
+                <div class="tip-content">
+                    <h3>থাকার ব্যবস্থা</h3>
+                    <p>আগে থেকে বুকিং দিলে সুবিধা হয়। সরকারি রেস্ট হাউস, বেসরকারি হোটেল, অথবা বাড়িতে থেকেও স্থানীয় অভিজ্ঞতা নিতে পারেন।</p>
+                </div>
+            </div>
+            <div class="tip-item reveal">
+                <div class="tip-icon">📸</div>
+                <div class="tip-content">
+                    <h3>মুহূর্ত তুলে রাখুন</h3>
+                    <p>ক্যামেরা বা ফোন সাথে রাখুন। ভোরবেলার সূর্যোদয়, সন্ধ্যার আকাশ, পাহাড়ি মেঘ—প্রতিটি মুহূর্ত স্মৃতিতে আঁকুন।</p>
+                </div>
+            </div>
+            <div class="tip-item reveal">
+                <div class="tip-icon">🤝</div>
+                <div class="tip-content">
+                    <h3>স্থানীয়দের সাথে কথা বলুন</h3>
+                    <p>বাংলাদেশের মানুষ অতিথিপরায়ণ। স্থানীয়দের সাথে কথা বললে জানা যায় অনেক অজানা তথ্য ও গল্প।</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">ঘুরাঘুরি</div>
+        <p class="footer-tagline">"বাংলাদেশ দেখুন, বাংলাদেশ জানুন"</p>
+        <ul class="footer-links">
+            <li><a href="#about">পরিচিতি</a></li>
+            <li><a href="#destinations">গন্তব্য</a></li>
+            <li><a href="#regions">বিভাগ</a></li>
+            <li><a href="#tips">টিপস</a></li>
+        </ul>
+        <div class="footer-bottom">
+            <p>© ২০২৬ ঘুরাঘুরি | বাংলাদেশের সৌন্দর্য তুলে ধরার একটি ছোট প্রয়াস</p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll reveal animation
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal();
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Parallax effect for decorations
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            document.querySelectorAll('.decoration').forEach((dec, i) => {
+                const speed = 0.05 + (i * 0.02);
+                dec.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+    </script>
 </body>
 </html>
